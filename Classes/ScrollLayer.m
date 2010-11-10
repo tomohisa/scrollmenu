@@ -11,15 +11,14 @@
 @interface ScrollLayer()
 @property (nonatomic,retain) CCLayer* world;
 - (BOOL)containsTouchLocation:(UITouch *)touch;
+- (void) moveToPagePosition;
 @end
 
 
 @implementation ScrollLayer
 @synthesize pageSize;
-@synthesize currentPage;
 @synthesize arrayPages;
 @synthesize world;
-
 -(id) init {
 	if ((self=[super init])) {
 		self.isTouchEnabled = YES;
@@ -28,21 +27,21 @@
 	return self;
 }
 - (void)onEnter {
-	CCLOG(@"onEnter");
+//	CCLOG(@"onEnter");
 	[[CCTouchDispatcher sharedDispatcher] addTargetedDelegate:self priority:0 swallowsTouches:YES];
 	[super onEnter];
 }
 
 - (void)onExit {
-	CCLOG(@"onEnter");
+//	CCLOG(@"onEnter");
 	[[CCTouchDispatcher sharedDispatcher] removeDelegate:self];
 	[super onExit];
 }	
 
 -(void)makePages {
 	CGSize s = self.contentSize;
-	CCLOG(@"[%f][%f]",s.width,s.height);
-	CCLOG(@"anchorpoint[%f][%f]",self.anchorPoint.x,self.anchorPoint.y);
+//	CCLOG(@"[%f][%f]",s.width,s.height);
+//	CCLOG(@"anchorpoint[%f][%f]",self.anchorPoint.x,self.anchorPoint.y);
 	self.world = [CCLayer node];
 	world.contentSize = CGSizeMake(s.width * pageSize, s.height);
 	for (int i=0; i < [arrayPages count]; i++) {
@@ -72,7 +71,6 @@
 	CCLOG(@"touch handle");
 	return YES;
 	
-	
 }
 - (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
 	CGPoint n = [self convertTouchToNodeSpaceAR:touch];
@@ -82,30 +80,47 @@
 - (void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event {
 	CGPoint n = [self convertTouchToNodeSpaceAR:touch];
 	if (n.x - touchStartedPoint.x > 50 && currentPage > 0) {
-		currentPage--;
+		self.currentPage = self.currentPage - 1;
 	}
 	if (n.x - touchStartedPoint.x < -50 && currentPage < ([arrayPages count] - 1)) {
-		currentPage++;
+		self.currentPage = self.currentPage + 1;
+	}
+	[self moveToPagePosition];
+	isTouching = NO;
+}
+- (void)ccTouchCancelled:(UITouch *)touch withEvent:(UIEvent *)event {
+	isTouching = NO;
+	[self moveToPagePosition];
+}
+
+-(int) currentPage {
+	return currentPage;
+}
+
+-(void) setCurrentPage:(int)a {
+	if (a >= 0 && a < pageSize) {
+		currentPage = a;
+	}else {
+		NSAssert(YES,@"ERROR! not valid page number");
+		return;
+	}
+	if (world) {
+		[self moveToPagePosition];
 	}
 	
-	isTouching = NO;
-	
+}
+- (void) moveToPagePosition {
+	CGPoint positionNow = world.position;
 	CGSize s = self.contentSize;
-	float diffX = fabs( (touchStartedWorldPosition.x + n.x - touchStartedPoint.x) - (-s.width /2 -s.width * currentPage) );
-	CCLOG(@"diff[%f]",diffX);
+	float diffX = fabs( (positionNow.x) - (-s.width /2 -s.width * currentPage) );
+//	CCLOG(@"diff[%f]",diffX);
 	
 	if (diffX > 0) {
 		id moveTo = [CCMoveTo actionWithDuration:(0.5 * diffX / s.width)  position:ccp(-s.width /2 -s.width * currentPage, -s.height/2)];
 		[world runAction:moveTo];
 	}
+	
 }
-- (void)ccTouchCancelled:(UITouch *)touch withEvent:(UIEvent *)event {
-	isTouching = NO;
-	CGSize s = self.contentSize;
-	id moveTo = [CCMoveTo actionWithDuration:0.5 position:ccp(-s.width /2 -s.width * currentPage, -s.height/2)];
-	[world runAction:moveTo];
-}
-
-
+	
 
 @end

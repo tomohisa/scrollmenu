@@ -48,34 +48,34 @@
 		
 		
 		self.scrollLayer = [ScrollLayer node];
-		self.scrollLayer.contentSize = CGSizeMake(200, 200);
+		self.scrollLayer.contentSize = CGSizeMake(250, 200);
 		self.scrollLayer.position = ccp( size.width /2 , size.height/2 );
 		self.scrollLayer.pageSize = 5;
 		NSMutableArray* array = [NSMutableArray arrayWithCapacity:0];
 		CCSprite* temp;
 		temp = [CCSprite node];
 		temp.color = ccYELLOW;
-		temp.textureRect = CGRectMake(0, 0, 200, 200);
+		temp.textureRect = CGRectMake(0, 0, 250, 200);
 		[array addObject:temp];
 
 		temp = [CCSprite node];
 		temp.color = ccBLUE;
-		temp.textureRect = CGRectMake(0, 0, 200, 200);
+		temp.textureRect = CGRectMake(0, 0, 250, 200);
 		[array addObject:temp];
 
 		temp = [CCSprite node];
 		temp.color = ccWHITE;
-		temp.textureRect = CGRectMake(0, 0, 200, 200);
+		temp.textureRect = CGRectMake(0, 0, 250, 200);
 		[array addObject:temp];
 
 		temp = [CCSprite node];
 		temp.color = ccRED;
-		temp.textureRect = CGRectMake(0, 0, 200, 200);
+		temp.textureRect = CGRectMake(0, 0, 250, 200);
 		[array addObject:temp];
 
 		temp = [CCSprite node];
 		temp.color = ccGREEN;
-		temp.textureRect = CGRectMake(0, 0, 200, 200);
+		temp.textureRect = CGRectMake(0, 0, 250, 200);
 		[array addObject:temp];
 		
 		scrollLayer.arrayPages = array;
